@@ -17,19 +17,21 @@ Email sending api for gmail
       "password": "password"  // password for yourappsemail@gamil.com			
     }
 
-** Note: yourappsemail is the email id from which you want to send emails to your users. As of now it supports gmail only but emails can be sent to all users (gmail,live,yahoo... etc) **
+**Note: yourappsemail is the email id from which you want to send emails to your users. As of now it supports gmail only but emails can be sent to all users (gmail,live,yahoo... etc)**
 
 
 #### Step 2:
   If registration is successfull you would receive an auth token on yourappsemail@gmail.com. use that token to send emails to users.
   
-To send email make an https request to `http://128.199.169.129:8080/mailer/<your auth token>`
+To send email make an https request to `http://128.199.169.129:8080/mailer/your auth token`
 with payload containing
 
-  {
-  "to":"deathping1994@gmail.com",
-  "subject":"hey",
-  "message":"you have tried it too many times"
-  }`
+
+    {
+        "to":"deathping1994@gmail.com",
+        "subject":"hey",
+        "message":"you have tried it too many times"
+    }
+
 
 You would get a response notifying you if email was sent successfully or not.
