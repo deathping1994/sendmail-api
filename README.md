@@ -1,6 +1,6 @@
 # gmail-sendmail-api
 Email sending api for gmail
-
+**The server mentioned below is down but you can always set up your own using flask+ mongodb**
 # Use Case
   1. Send Verification emails to user while signup
   2. Implement forgot password using OTP on email
