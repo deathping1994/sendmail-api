@@ -1,4 +1,6 @@
 # gmail-sendmail-api
+
+Note: Do not forget to enable `allow less secure apps` under sttings option in your apps email
 Email sending api for gmail
 **The server mentioned below is down but you can always set up your own using flask+ mongodb**
 # Use Case
