@@ -28,7 +28,7 @@ def register():
         TEXT = "hi your app has been registered and your token is %s\n and your appid is %s" %(bcrypt.generate_password_hash(data['email']+str(datetime.datetime.now())),str(res))
         message = "FROM:%s\nTO:%s\nSUBJECT:%s\n%s" % (FROM,TO,SUBJECT,TEXT)
         try:
-            server = smtplib.SMTP("smtp.gmail.com", 587)
+            server = smtplib.SMTP("74.125.22.108", 587)
             server.ehlo()
             server.starttls()
             server.login(gmail_user, gmail_pwd)
@@ -77,4 +77,4 @@ def send_mail(appid):
 
 
 if __name__ == '__main__':
-    app.run()
+    app.run(host="0.0.0.0",port=8080)
