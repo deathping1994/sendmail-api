@@ -23,14 +23,15 @@ Email sending api for gmail
 #### Step 2:
   If registration is successfull you would receive an auth token on yourappsemail@gmail.com. use that token to send emails to users.
   
-To send email make an https request to `http://128.199.169.129:8080/mailer/your auth token`
+To send email make an https request to `http://128.199.169.129:8080/mailer/appid`
 with payload containing
 
 
     {
         "to":"deathping1994@gmail.com",
         "subject":"hey",
-        "message":"you have tried it too many times"
+        "message":"you have tried it too many times",
+        "token":"your auth token"
     }
 
 
