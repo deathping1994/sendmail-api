@@ -19,8 +19,8 @@ channel.queue_declare(queue='hello')
 print ' [*] Waiting for messages. To exit press CTRL+C'
 
 def callback(ch, method, properties, body):
-    print body
-    email(body['FROM'],body['TO'],body['message'])
+    data=eval(body)
+    email(data['FROM'],data['TO'],data['message'])
     print "sent email"
 channel.basic_consume(callback,
                       queue='hello',

@@ -16,6 +16,7 @@ channel = connection.channel()
 
 def register_mail(data):
     try:
+        appdetail={}
         appdetail['email']=data['email']
         appdetail['password']=data['password']
         res=mongo.db.registeredapp.insert({"appemail":appdetail['email'],"password":appdetail['password'],
@@ -28,13 +29,13 @@ def register_mail(data):
         TEXT = "hi your app has been registered and your token is %s\n and your appid is %s" %(bcrypt.generate_password_hash(data['email']+str(datetime.datetime.now())),str(res))
         message = "FROM:%s\nTO:%s\nSUBJECT:%s\n%s" % (FROM,TO,SUBJECT,TEXT)
         channel.queue_declare(queue='hello')
-        mq_message=[]
+        mq_message={}
         mq_message['FROM']=FROM
         mq_message['TO']=TO
         mq_message['message']=message
         channel.basic_publish(exchange='',
                               routing_key='hello',
-                              body=mq_message)
+                              body=str(mq_message))
         connection.close()
 
     except Exception as e:
@@ -44,7 +45,7 @@ def register_mail(data):
 @app.route('/registerapp',methods=["GET","POST"])
 def register():
     try:
-        appdetail={}
+
         # import pdb
         # pdb.set_trace()
         data=request.get_json(force=True)
@@ -73,13 +74,13 @@ def send_mail(appid):
                         "\nDisclaimer: Developer does not hold any responsibility as to how this service may be used"
                 message = "FROM:%s\nTO:%s\nSUBJECT:%s\n%s\n \n%s" % (FROM,TO,SUBJECT,TEXT,credits)
                 channel.queue_declare(queue='hello')
-                mq_message=[]
+                mq_message={}
                 mq_message['FROM']=FROM
                 mq_message['TO']=TO
                 mq_message['message']=message
                 channel.basic_publish(exchange='',
                                       routing_key='hello',
-                                      body=mq_message)
+                                      body=str(mq_message))
                 connection.close()
 
                 return jsonify(success='successfully sent the e-mail'),200
