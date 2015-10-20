@@ -20,7 +20,7 @@ print ' [*] Waiting for messages. To exit press CTRL+C'
 
 def callback(ch, method, properties, body):
     data=eval(body)
-    email(data['FROM'],data['TO'],data['message'],data['gmail_user'],data['gamil_pwd'])
+    email(data['FROM'],data['TO'],data['message'],data['gmail_user'],data['gmail_pwd'])
     print "sent email"
 channel.basic_consume(callback,
                       queue='hello',

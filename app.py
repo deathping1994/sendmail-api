@@ -55,6 +55,7 @@ def register():
         return jsonify(success="App registered successfully! Authtoken will be emailed to you.",)
     except Exception as e:
         print e
+        print "Unexpected error:", sys.exc_info()[0]
         return jsonify(error="something went wrong maybe you supplied wrong details"),500
 
 
@@ -80,6 +81,8 @@ def send_mail(appid):
                 mq_message['FROM']=FROM
                 mq_message['TO']=TO
                 mq_message['message']=message
+		mq_message['gmail_user']=gmail_user
+        	mq_message['gmail_pwd']=gmail_pwd
                 channel.basic_publish(exchange='',
                                       routing_key='hello',
                                       body=str(mq_message))
@@ -92,6 +95,7 @@ def send_mail(appid):
             return jsonify(error="Your app is not registered to use this service"),500
     except Exception as e:
         print e
+        print "Unexpected error:", sys.exc_info()[0]
         return jsonify(error="failed to send mail"),500
 
 
