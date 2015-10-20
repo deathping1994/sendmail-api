@@ -10,12 +10,13 @@ app = Flask("FREEMAIL")
 mongo=PyMongo(app)
 bcrypt=Bcrypt(app)
 
-connection = pika.BlockingConnection(pika.ConnectionParameters(
-        host='localhost'))
-channel = connection.channel()
 
 def register_mail(data):
     try:
+        connection = pika.BlockingConnection(pika.ConnectionParameters(
+        host='localhost'))
+        channel = connection.channel()
+
         appdetail={}
         appdetail['email']=data['email']
         appdetail['password']=data['password']
@@ -63,6 +64,9 @@ def register():
 @app.route('/mailer/<appid>',methods=["GET","POST"])
 def send_mail(appid):
     try:
+        connection = pika.BlockingConnection(pika.ConnectionParameters(
+        host='localhost'))
+        channel = connection.channel()
         res=mongo.db.registeredapp.find_one({"_id": ObjectId(appid)})
         if res is not None:
             data=request.get_json(force=True)
@@ -81,8 +85,8 @@ def send_mail(appid):
                 mq_message['FROM']=FROM
                 mq_message['TO']=TO
                 mq_message['message']=message
-		mq_message['gmail_user']=gmail_user
-        	mq_message['gmail_pwd']=gmail_pwd
+                mq_message['gmail_user']=gmail_user
+                mq_message['gmail_pwd']=gmail_pwd
                 channel.basic_publish(exchange='',
                                       routing_key='hello',
                                       body=str(mq_message))
