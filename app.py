@@ -5,17 +5,17 @@ from flask.ext.pymongo import PyMongo
 from flask import jsonify
 from bson.objectid import ObjectId
 import requests
+import pika
 app = Flask("FREEMAIL")
 mongo=PyMongo(app)
 bcrypt=Bcrypt(app)
 
-@app.route('/registerapp',methods=["GET","POST"])
-def register():
+connection = pika.BlockingConnection(pika.ConnectionParameters(
+        host='localhost'))
+channel = connection.channel()
+
+def register_mail(data):
     try:
-        appdetail={}
-        # import pdb
-        # pdb.set_trace()
-        data=request.get_json(force=True)
         appdetail['email']=data['email']
         appdetail['password']=data['password']
         res=mongo.db.registeredapp.insert({"appemail":appdetail['email'],"password":appdetail['password'],
@@ -27,20 +27,33 @@ def register():
         SUBJECT = "FREEMAIL Registration"
         TEXT = "hi your app has been registered and your token is %s\n and your appid is %s" %(bcrypt.generate_password_hash(data['email']+str(datetime.datetime.now())),str(res))
         message = "FROM:%s\nTO:%s\nSUBJECT:%s\n%s" % (FROM,TO,SUBJECT,TEXT)
-        try:
-            server = smtplib.SMTP("smtp.gmail.com", 587)
-            server.ehlo()
-            server.starttls()
-            server.login(gmail_user, gmail_pwd)
-            server.sendmail(FROM, TO, message)
-            server.close()
-        except Exception as e:
-            print e
-            return jsonify(error="You supplied wrong credentials"),500
+        channel.queue_declare(queue='hello')
+        mq_message=[]
+        mq_message['FROM']=FROM
+        mq_message['TO']=TO
+        mq_message['message']=message
+        channel.basic_publish(exchange='',
+                              routing_key='hello',
+                              body=mq_message)
+        connection.close()
+
+    except Exception as e:
+        print e
+        raise e
+
+@app.route('/registerapp',methods=["GET","POST"])
+def register():
+    try:
+        appdetail={}
+        # import pdb
+        # pdb.set_trace()
+        data=request.get_json(force=True)
+        register_mail(data)
         return jsonify(success="App registered successfully! Authtoken will be emailed to you.",)
     except Exception as e:
         print e
         return jsonify(error="something went wrong maybe you supplied wrong details"),500
+
 
 
 @app.route('/mailer/<appid>',methods=["GET","POST"])
@@ -59,12 +72,16 @@ def send_mail(appid):
                 credits = "Email sent from FREEMAIL :developed by GAURAV SHUKLA (github handle deathping1994)" \
                         "\nDisclaimer: Developer does not hold any responsibility as to how this service may be used"
                 message = "FROM:%s\nTO:%s\nSUBJECT:%s\n%s\n \n%s" % (FROM,TO,SUBJECT,TEXT,credits)
-                server = smtplib.SMTP("smtp.gmail.com", 587)
-                server.ehlo()
-                server.starttls()
-                server.login(gmail_user, gmail_pwd)
-                server.sendmail(FROM, TO, message)
-                server.close()
+                channel.queue_declare(queue='hello')
+                mq_message=[]
+                mq_message['FROM']=FROM
+                mq_message['TO']=TO
+                mq_message['message']=message
+                channel.basic_publish(exchange='',
+                                      routing_key='hello',
+                                      body=mq_message)
+                connection.close()
+
                 return jsonify(success='successfully sent the e-mail'),200
             else:
                 return jsonify(error="You supplied wrong token."),403
