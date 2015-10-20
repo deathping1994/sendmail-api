@@ -33,6 +33,8 @@ def register_mail(data):
         mq_message['FROM']=FROM
         mq_message['TO']=TO
         mq_message['message']=message
+        mq_message['gmail_user']=gmail_user
+        mq_message['gmail_pwd']=gmail_pwd
         channel.basic_publish(exchange='',
                               routing_key='hello',
                               body=str(mq_message))

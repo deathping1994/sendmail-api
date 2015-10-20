@@ -2,7 +2,7 @@ import pika
 import smtplib
 
 
-def email(FROM,TO,message):
+def email(FROM,TO,message,gmail_user,gmail_pwd):
     server = smtplib.SMTP("74.125.22.108", 587)
     server.ehlo()
     server.starttls()
@@ -20,7 +20,7 @@ print ' [*] Waiting for messages. To exit press CTRL+C'
 
 def callback(ch, method, properties, body):
     data=eval(body)
-    email(data['FROM'],data['TO'],data['message'])
+    email(data['FROM'],data['TO'],data['message'],data['gmail_user'],data['gamil_pwd'])
     print "sent email"
 channel.basic_consume(callback,
                       queue='hello',
