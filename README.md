@@ -11,7 +11,7 @@ Email sending api for gmail
 # How to use
 
 #### Step 1:
-  Register your app or website by sending an HTTP request to `http://128.199.169.129:8080/registerapp`
+  Register your app or website by sending an HTTP request to `http://sendmail.gauravshukla.xyz:8080/registerapp`
   with payload
     
     {
@@ -25,7 +25,7 @@ Email sending api for gmail
 #### Step 2:
   If registration is successfull you would receive an auth token on yourappsemail@gmail.com. use that token to send emails to users.
   
-To send email make an https request to `http://128.199.169.129:8080/mailer/appid`
+To send email make an https request to `http://sendmail.gauravshukla.xyz:8080/mailer/appid`
 with payload containing
 
 
